@@ -1,16 +1,28 @@
-# Don't Remove Credit @VJ_Botz
-# Subscribe YouTube Channel For Amazing Bot @Tech_VJ
-# Ask Doubt on telegram @KingVJ01
+FROM python:3.10-slim-buster
 
-FROM python:3.10.8-slim-buster
+# Avoid interactive prompts
+ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt update && apt upgrade -y
-RUN apt install git -y
-COPY requirements.txt /requirements.txt
+# Install system packages
+RUN apt-get update && apt-get install -y \
+    git \
+    ffmpeg \
+    wget \
+    curl \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN cd /
-RUN pip3 install -U pip && pip3 install -U -r requirements.txt
-RUN mkdir /VJ-FILTER-BOT
-WORKDIR /VJ-FILTER-BOT
-COPY . /VJ-FILTER-BOT
+# Copy requirements first (better caching)
+COPY requirements.txt /app/requirements.txt
+
+WORKDIR /app
+
+# Install python deps
+RUN pip install --no-cache-dir -U pip setuptools wheel
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy all files
+COPY . .
+
+# Run bot
 CMD ["python", "bot.py"]
