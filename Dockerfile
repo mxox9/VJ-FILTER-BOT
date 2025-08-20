@@ -1,9 +1,9 @@
 FROM python:3.10-slim-buster
 
-# Avoid interactive prompts
+# Prevent interactive prompts
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install system packages
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
     git \
     ffmpeg \
@@ -12,16 +12,17 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements first (better caching)
-COPY requirements.txt /app/requirements.txt
-
+# Set workdir
 WORKDIR /app
 
-# Install python deps
+# Copy requirements first (for caching)
+COPY requirements.txt .
+
+# Install python dependencies
 RUN pip install --no-cache-dir -U pip setuptools wheel
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy all files
+# Copy project files
 COPY . .
 
 # Run bot
