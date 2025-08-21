@@ -2,28 +2,30 @@
 # Subscribe YouTube Channel For Amazing Bot @Tech_VJ
 # Ask Doubt on telegram @KingVJ01
 
-FROM python:3.10-slim-bookworm
+# ❌ buster hatao
+# FROM python:3.10.8-slim-buster
+# ✅ latest supported image use karo
+FROM python:3.10-slim-bookworm  
 
-# Prevent interactive prompts during apt installs
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install system dependencies
+# Install system deps
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     ffmpeg \
     wget \
     curl \
     build-essential \
-    && rm -rf /var/lib/apt/lists/*
+ && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements first for caching
+# Copy requirements
 COPY requirements.txt /requirements.txt
 
-# Install Python dependencies
+# Install Python deps
 RUN pip install --no-cache-dir -U pip setuptools wheel \
-    && pip install --no-cache-dir -r /requirements.txt
+ && pip install --no-cache-dir -r /requirements.txt
 
-# Create working directory
+# Workdir
 WORKDIR /VJ-FILTER-BOT
 
 # Copy all files
