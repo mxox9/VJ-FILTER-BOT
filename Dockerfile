@@ -1,29 +1,31 @@
-FROM python:3.10-slim-bullseye
+# Don't Remove Credit @VJ_Botz
 
-# Prevent interactive prompts
-ENV DEBIAN_FRONTEND=noninteractive
+# Subscribe YouTube Channel For Amazing Bot @Tech_VJ
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    git \
-    ffmpeg \
-    wget \
-    curl \
-    build-essential \
-    && rm -rf /var/lib/apt/lists/*
+# Ask Doubt on telegram @KingVJ01
 
-# Set workdir
-WORKDIR /app
 
-# Copy requirements first (for caching)
-COPY requirements.txt .
 
-# Install python dependencies
-RUN pip install --no-cache-dir -U pip setuptools wheel
-RUN pip install --no-cache-dir -r requirements.txt
+FROM python:3.10.8-slim-buster
 
-# Copy project files
-COPY . .
 
-# Run bot
+
+RUN apt update && apt upgrade -y
+
+RUN apt install git -y
+
+COPY requirements.txt /requirements.txt
+
+
+
+RUN cd /
+
+RUN pip3 install -U pip && pip3 install -U -r requirements.txt
+
+RUN mkdir /VJ-FILTER-BOT
+
+WORKDIR /VJ-FILTER-BOT
+
+COPY . /VJ-FILTER-BOT
+
 CMD ["python", "bot.py"]
