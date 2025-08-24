@@ -89,8 +89,8 @@ PUBLIC_FILE_CHANNEL = environ.get('PUBLIC_FILE_CHANNEL', 'logoxchnl') # Public C
 
 # Links
 GRP_LNK = environ.get('GRP_LNK', 'https://t.me/mixy_ox')
-CHNL_LNK = environ.get('CHNL_LNK', 'https://mixy_ox')
-SUPPORT_CHAT = environ.get('SUPPORT_CHAT', 'moxy_ox') # Support Chat Link Without https:// or @
+CHNL_LNK = environ.get('CHNL_LNK', 'https://t.me/mixy_ox')
+SUPPORT_CHAT = environ.get('SUPPORT_CHAT', 'mixy_ox') # Support Chat Link Without https:// or @
 OWNER_LNK = environ.get('OWNER_LNK', 'https://t.me/mixy_ox')
 
 # True Or False
@@ -156,7 +156,7 @@ YEARS = ["1900", "1991", "1992", "1993", "1994", "1995", "1996", "1997", "1998",
 
 
 # Online Stream and Download
-STREAM_MODE = bool(environ.get('STREAM_MODE', True)) # Set True or False
+STREAM_MODE = bool(environ.get('STREAM_MODE', False)) # Set True or False
 
 # If Stream Mode Is True Then Fill All Required Variable, If False Then Don't Fill.
 MULTI_CLIENT = False
@@ -196,6 +196,7 @@ else:
 # Don't Remove Credit @VJ_Botz
 # Subscribe YouTube Channel For Amazing Bot @Tech_VJ
 # Ask Doubt on telegram @KingVJ01
+
 
 
 
