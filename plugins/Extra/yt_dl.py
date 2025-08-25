@@ -16,61 +16,92 @@ from yt_dlp import YoutubeDL
 
 @Client.on_message(filters.command(['song', 'mp3']) & filters.private)
 async def song(client, message):
-    user_id = message.from_user.id 
-    user_name = message.from_user.first_name 
-    rpk = "["+user_name+"](tg://user?id="+str(user_id)+")"
-    query = ''
-    for i in message.command[1:]:
-        query += ' ' + str(i)
-    print(query)
-    m = await message.reply(f"**ѕєαrchíng чσur ѕσng...!\n {query}**")
-    ydl_opts = {"format": "bestaudio[ext=m4a]"}
-    try:
-        results = YoutubeSearch(query, max_results=1).to_dict()
-        link = f"https://youtube.com{results[0]['url_suffix']}"
-        title = results[0]["title"][:40]       
-        thumbnail = results[0]["thumbnails"][0]
-        thumb_name = f'thumb{title}.jpg'
-        thumb = requests.get(thumbnail, allow_redirects=True)
-        open(thumb_name, 'wb').write(thumb.content)
-        performer = f"[NETWORKS™]" 
-        duration = results[0]["duration"]
-        url_suffix = results[0]["url_suffix"]
-        views = results[0]["views"]
-    except Exception as e:
-        print(str(e))
-        return await m.edit("Example: /song vaa vaathi song")
-                
-    await m.edit("**dσwnlσαdíng чσur ѕσng...!**")
-    try:
-        with YoutubeDL(ydl_opts) as ydl:
-            info_dict = ydl.extract_info(link, download=False)
-            audio_file = ydl.prepare_filename(info_dict)
-            ydl.process_info(info_dict)
+    # Get query from message, joining all words after the command
+    query = " ".join(message.command[1:])
+    if not query:
+        return await message.reply_text("Please provide a song name.\nExample: `/song vaa vaathi song`")
 
+    m = await message.reply_text(f"**🔎 Searching for your song...\n`{query}`**")
+    
+    try:
+        # Search for the song on YouTube, get only the first result
+        results = YoutubeSearch(query, max_results=1).to_dict()
+        if not results:
+            return await m.edit("❌ Song not found. Please check the spelling and try again.")
+
+        # Extract info from the search result
+        video_info = results[0]
+        link = f"https://youtube.com{video_info['url_suffix']}"
+        title = video_info["title"]
+        duration = video_info["duration"]
+        thumbnail_url = video_info["thumbnails"][0]
+        video_id = video_info["id"]
+
+        # Download the thumbnail
+        thumb_name = f'thumb_{video_id}.jpg'
+        thumb = requests.get(thumbnail_url, allow_redirects=True)
+        open(thumb_name, 'wb').write(thumb.content)
+
+    except Exception as e:
+        await m.edit("❌ Search failed! Please try again later.\nExample: `/song vaa vaathi song`")
+        print(f"Search Error: {e}")
+        return
+                
+    await m.edit("**📥 Downloading your song...**")
+
+    # yt-dlp options to download the best audio available
+    ydl_opts = {
+        'format': 'bestaudio/best',
+        'outtmpl': f'downloads/{video_id}.%(ext)s',
+        'noplaylist': True,
+        'quiet': True,
+        'no_warnings': True,
+    }
+
+    # Create a 'downloads' directory if it doesn't exist
+    if not os.path.isdir("downloads"):
+        os.makedirs("downloads")
+
+    audio_file = None  # Initialize to handle potential errors
+    try:
+        # Download the audio using yt-dlp
+        with YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(link, download=True)
+            audio_file = ydl.prepare_filename(info)
+
+        # Prepare caption and other details for sending the audio
         cap = f"**BY›› [UPDATE]({CHNL_LNK})**"
+        
+        # Convert duration string (e.g., "3:45") to total seconds for Pyrogram
         secmul, dur, dur_arr = 1, 0, duration.split(':')
         for i in range(len(dur_arr)-1, -1, -1):
             dur += (int(dur_arr[i]) * secmul)
             secmul *= 60
+
+        # Send the downloaded audio file to the user
         await message.reply_audio(
-            audio_file,
-            caption=cap,            
-            quote=False,
-            title=title,
+            audio=audio_file,
+            caption=cap,
+            title=title[:35],  # Telegram title limit is around 35 chars
+            performer="VJ Botz",
             duration=dur,
-            performer=performer,
             thumb=thumb_name
-        )            
+        )
         await m.delete()
+
     except Exception as e:
-        await m.edit("**🚫 𝙴𝚁𝚁𝙾𝚁 🚫**")
-        print(e)
-    try:
-        os.remove(audio_file)
-        os.remove(thumb_name)
-    except Exception as e:
-        print(e)
+        await m.edit("**🚫 ERROR 🚫**\n\nSomething went wrong while downloading. Please try again.")
+        print(f"Download/Upload Error: {e}")
+        
+    finally:
+        # Clean up (delete) the downloaded audio file and thumbnail
+        try:
+            if audio_file and os.path.exists(audio_file):
+                os.remove(audio_file)
+            if os.path.exists(thumb_name):
+                os.remove(thumb_name)
+        except Exception as e:
+            print(f"Cleanup Error: {e}")
 
 def get_text(message: Message) -> [None,str]:
     text_to_return = message.text
