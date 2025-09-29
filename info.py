@@ -88,10 +88,10 @@ PUBLIC_FILE_CHANNEL = environ.get('PUBLIC_FILE_CHANNEL', 'logoxchnl') # Public C
 
 
 # Links
-GRP_LNK = environ.get('GRP_LNK', 'https://t.me/mixy_ox')
-CHNL_LNK = environ.get('CHNL_LNK', 'https://t.me/mixy_ox')
-SUPPORT_CHAT = environ.get('SUPPORT_CHAT', 'mixy_ox') # Support Chat Link Without https:// or @
-OWNER_LNK = environ.get('OWNER_LNK', 'https://t.me/mixy_ox')
+GRP_LNK = environ.get('GRP_LNK', 'https://t.me/movie_group_ox')
+CHNL_LNK = environ.get('CHNL_LNK', 'https://t.me/+m9LhCY4PL-U3ZWJl')
+SUPPORT_CHAT = environ.get('SUPPORT_CHAT', 'Mixy_official_bot') # Support Chat Link Without https:// or @
+OWNER_LNK = environ.get('OWNER_LNK', 'https://t.me/Mixy_official_bot')
 
 # True Or False
 AI_SPELL_CHECK = bool(environ.get('AI_SPELL_CHECK', True))
@@ -196,6 +196,7 @@ else:
 # Don't Remove Credit @VJ_Botz
 # Subscribe YouTube Channel For Amazing Bot @Tech_VJ
 # Ask Doubt on telegram @KingVJ01
+
 
 
 
